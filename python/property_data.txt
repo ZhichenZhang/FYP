@@ -1,0 +1,310 @@
+Address: 83 Father Griffin Road, Galway, Claddagh, Co. Galway, H91W6YT
+Price: €325,000
+Metadata: 2 Bed1 Bath50 m²Bungalow
+Details: Details not available.
+------------------------------
+Address: 104 Meadow Copse, D15 EW7X, Hartstown, Dublin 15
+Price: €330,000
+Metadata: 3 Bed1 Bath84 m²Bungalow
+Details: Details not available.
+------------------------------
+Address: Kilcaragh, Grantstown, Ballinamona, Co. Waterford, X91W3P0
+Price: €475,000
+Metadata: 4 Bed3 BathDetached
+Details: Details not available.
+------------------------------
+Address: Coolduff, Lissarda, Kilmurry, Co. Cork, P14CK85
+Price: €575,000
+Metadata: 5 Bed3 Bath375 m²Detached
+Details: Details not available.
+------------------------------
+Address: 94 Old Cabra Road, Dublin 7, Navan Road (D7), Dublin 7, D07F2P7
+Price: €1,250,000
+Metadata: 3 Bed3 Bath130 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 36 Newton Court, Grange, Douglas, Co. Cork, T12YNN3
+Price: €279,000
+Metadata: 3 Bed1 Bath110 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 3 Killincarrig Manor, Greystones, Greystones, Co. Wicklow, A63K221
+Price: €935,000
+Metadata: 2 Bed2 Bath141 m²End of Terrace
+Details: Details not available.
+------------------------------
+Address: Kenver House, Clonown Road, Athlone, Co. Westmeath, N37XY27
+Price: €345,000
+Metadata: 3 Bed3 Bath160 m²End of Terrace
+Details: Details not available.
+------------------------------
+Address: Berring's, Berring's, Island Lane, Ballinakill, Waterford City, Co. Waterford, X91YYP8
+Price: €695,000
+Metadata: 5 Bed2 Bath260 m²Detached
+Details: Details not available.
+------------------------------
+Address: Grandgate Lodge, Gardenfield, Tuam, Co. Galway, H54Y067
+Price: €550,000
+Metadata: 4 Bed3 Bath220 m²Detached
+Details: Details not available.
+------------------------------
+Address: 46 Upper Grand Canal Street, Ballsbridge, Dublin 4, D04VX62
+Price: €1,250,000
+Metadata: 4 Bed3 Bath154 m²Terrace
+Details: Details not available.
+------------------------------
+Address: 11 Woodfield, Circular Road, Dunmore East, Co. Waterford, X91A3X0
+Price: €870,000
+Metadata: 4 Bed3 BathDetached
+Details: Details not available.
+------------------------------
+Address: Hillcroft, Greens Hill, Kilkenny, Co. Kilkenny, R95YR6E
+Price: €795,000
+Metadata: 5 Bed2 Bath195 m²Detached
+Details: Details not available.
+------------------------------
+Address: Maytree, Bray Road, Enniskerry, Co. Wicklow, A98V072
+Price: €975,000
+Metadata: 4 Bed3 Bath227 m²Detached
+Details: Details not available.
+------------------------------
+Address: 3 Leeson Park Avenue, Ranelagh, Ranelagh, Dublin 6, D06PD74
+Price: €1,250,000
+Metadata: 2 Bed1 Bath124 m²Terrace
+Details: Details not available.
+------------------------------
+Address: Drishogue, Clerihan, Newchapel, Co. Tipperary, E91X027
+Price: €400,000
+Metadata: 5 Bed3 Bath2080 m²Detached
+Details: Details not available.
+------------------------------
+Address: Derrigimlagh, Ballyconneely, Co. Galway, H71FP27
+Price: €750,000
+Metadata: 3 Bed4 Bath250 m²Detached
+Details: Details not available.
+------------------------------
+Address: The Farmhouse, Ballinteskin, Wicklow Town, Co. Wicklow, A67NW50
+Price: €725,000
+Metadata: 4 Bed3 Bath171 m²Detached
+Details: Details not available.
+------------------------------
+Address: Apartment 42, Block A, The Bottle Works, Irishtown, Dublin 4, D04V089
+Price: €460,000
+Metadata: 2 Bed2 Bath68 m²Apartment
+Details: Details not available.
+------------------------------
+Address: 12 Abington, Malahide, K36NT72
+Price: AMV: €1,550,000
+Metadata: 4 Bed4 Bath336 m²Detached
+Details: Details not available.
+------------------------------
+Address: Gardenfield, H54A990
+Price: €290,000
+Metadata: 3 Bed1 Bath84 m²Detached
+Details: Details not available.
+------------------------------
+Address: 28 Gilford Road, Dublin 4, Sandymount, Dublin 4, D04YF77
+Price: €3,600,000
+Metadata: 4 Bed4 Bath260 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 6 The Lawns, Temple Manor, Celbridge, Celbridge, Co. Kildare, W23AE27
+Price: €760,000
+Metadata: 5 Bed3 Bath200 m²Detached
+Details: Details not available.
+------------------------------
+Address: 44 Grove Avenue, Blackrock, Co. Dublin, A94E300
+Price: €995,000
+Metadata: 4 Bed2 Bath156 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 2 Ozier Court, Poleberry, Waterford City, Co. Waterford, X91E1NF
+Price: €205,000
+Metadata: 3 Bed1 Bath85 m²End of Terrace
+Details: Details not available.
+------------------------------
+Address: 34 Pleasant Drive, Mount Pleasant, Waterford City, Co. Waterford, X91A3FH
+Price: €370,000
+Metadata: 4 Bed1 Bath110 m²Bungalow
+Details: Details not available.
+------------------------------
+Address: 27 Hillview, Kilmoney, Carrigaline, Co. Cork, P43E449
+Price: €585,000
+Metadata: 4 Bed5 Bath225 m²Detached
+Details: Details not available.
+------------------------------
+Address: Glenside House, Maree Road, Renville East, Oranmore, Co. Galway, H91R6F6
+Price: €1,500,000
+Metadata: 4 Bed6 Bath384 m²Detached
+Details: Details not available.
+------------------------------
+Address: 643 The Kingfisher, The Sanctuary, Jacob'S Island, Mahon, Co. Cork, T12KR27
+Price: €340,000
+Metadata: 2 Bed2 Bath76 m²Apartment
+Details: Details not available.
+------------------------------
+Address: 50 Morehampton Square, Dublin 4, Donnybrook, Dublin 4, D04V271
+Price: €500,000
+Metadata: 2 Bed1 Bath58 m²Duplex
+Details: Details not available.
+------------------------------
+Address: Dunmore Lane, Falcarragh, Falcarragh, Co. Donegal, F92R8C7
+Price: €370,000
+Metadata: 4 Bed2 BathDetached
+Details: Details not available.
+------------------------------
+Address: 13 Leopardstown Park, Stillorgan, Co. Dublin, A94F752
+Price: €845,000
+Metadata: 4 Bed2 Bath155 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: Cherry View, Glenabbey Road, Mount Merrion, Co. Dublin, A94C1P8
+Price: €1,295,000
+Metadata: 4 Bed3 Bath173 m²Detached
+Details: Details not available.
+------------------------------
+Address: Apt. 15, Hanover Wharf, Grand Canal Dock, Dublin 2, D02CA43
+Price: €850,000
+Metadata: 3 Bed2 Bath140 m²Apartment
+Details: Details not available.
+------------------------------
+Address: Glenside House, Renville East, Oranmore, Co. Galway, H91R6F6
+Price: €1,500,000
+Metadata: 4 Bed6 Bath384 m²Detached
+Details: Details not available.
+------------------------------
+Address: 37 Oaktree Road, Stillorgan, Co. Dublin, A94CX92
+Price: €795,000
+Metadata: 3 Bed1 Bath101 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 26 Marian Park, Ballyheigue, Co. Kerry, V92Y9K3
+Price: €199,000
+Metadata: 3 Bed1 Bath80 m²Terrace
+Details: Details not available.
+------------------------------
+Address: The Anchorage, Colla Road, Schull, Schull, Co. Cork, P81DT86
+Price: €2,400,000
+Metadata: 5 Bed3 Bath334 m²Detached
+Details: Details not available.
+------------------------------
+Address: Penrose, Kilmoylin, Kilmacthomas, Co. Waterford, X42E039
+Price: €175,000
+Metadata: 3 Bed1 Bath86 m²Detached
+Details: Details not available.
+------------------------------
+Address: 46 Orrery Road, Gurranebraher, Gurranabraher, Co. Cork, T23Y7R5
+Price: €205,000
+Metadata: 3 Bed1 Bath58 m²Terrace
+Details: Details not available.
+------------------------------
+Address: Stonebridge Farmhouse, Ahacross, Kildorrery, Co. Cork, P67R963
+Price: €410,000
+Metadata: 4 Bed3 Bath229 m²Detached
+Details: Details not available.
+------------------------------
+Address: 21 Maunsells Road, Galway City, Co. Galway, H91T8K0
+Price: Price on Application
+Metadata: 4 Bed6 Bath440 m²Detached
+Details: Details not available.
+------------------------------
+Address: Sradrinagh House, Ballinaglera, Dorrusawillin, Co. Leitrim, N41RW28
+Price: €495,000
+Metadata: 4 Bed3 Bath285 m²Detached
+Details: Details not available.
+------------------------------
+Address: 8 Monalee Manor, Knocknacarra, Knocknacarra, Co. Galway, H91VP63
+Price: €625,000
+Metadata: 5 Bed4 Bath164 m²Detached
+Details: Details not available.
+------------------------------
+Address: 54 Woodbine Road, Blackrock, Co. Dublin, A94WF22
+Price: €1,950,000
+Metadata: 4 Bed3 Bath236 m²Detached
+Details: Details not available.
+------------------------------
+Address: 23 Ard Na Cuan, Wexford, Whiterock, Co. Wexford, Y35N9V2
+Price: €495,000
+Metadata: 4 Bed3 BathDetached
+Details: Details not available.
+------------------------------
+Address: Artramon Cottage, Crossabeg, Co. Wexford, Y35D2F8
+Price: €795,000
+Metadata: 5 Bed3 Bath270 m²Detached
+Details: Details not available.
+------------------------------
+Address: 24 Grange Hall, Mountmellick, Mountmellick, Co. Laois, R32AV66
+Price: €420,000
+Metadata: 6 Bed4 BathSemi-D
+Details: Details not available.
+------------------------------
+Address: Gortbrackmoor, Ahascragh, Ahascragh, Co. Galway, H53PX20
+Price: €599,000
+Metadata: 6 Bed4 Bath330 m²Detached
+Details: Details not available.
+------------------------------
+Address: 6 Watson Place, Dublin 16, Rathfarnham, Dublin 16, D16X8Y7
+Price: €1,500,000
+Metadata: 4 Bed4 Bath201 m²Detached
+Details: Details not available.
+------------------------------
+Address: 29 Holly Park Avenue, Blackrock, Co. Dublin, A94DH24
+Price: €1,025,000
+Metadata: 5 Bed3 Bath188 m²Detached
+Details: Details not available.
+------------------------------
+Address: 34B Windsor Park, Monkstown, Co. Dublin, A94E6N6
+Price: €875,000
+Metadata: 3 Bed3 Bath112 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: Glencollins Upper, Ballydesmond, Co. Cork, P51P6D9
+Price: €375,000
+Metadata: 4 Bed3 BathDetached
+Details: Details not available.
+------------------------------
+Address: Henley Cottage, Churchtown Road Upper, Churchtown, Dublin 14, D14X5C9
+Price: €1,595,000
+Metadata: 4 Bed3 Bath245 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: Stone Haven House Ballymoghany, Inniscrone, Enniscrone, Co. Sligo, F26FF64
+Price: €675,000
+Metadata: 5 Bed4 Bath275 m²Detached
+Details: Details not available.
+------------------------------
+Address: Crosscool House On c. 1.1 Acres, Edmondstown, Blessington, Co. Wicklow, W91C9C5
+Price: €595,000
+Metadata: 4 Bed2 Bath176 m²Detached
+Details: Details not available.
+------------------------------
+Address: Greyfort, Ballydonarea, Greystones, Co. Wicklow, A63HK81
+Price: €1,490,000
+Metadata: 5 Bed4 Bath350 m²Detached
+Details: Details not available.
+------------------------------
+Address: 9 Dún Rioga Crescent, Dunshaughlin, Co. Meath, A85YN70
+Price: €450,000
+Metadata: 3 Bed3 Bath103 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 16 Springhill Avenue, Blackrock, Co. Dublin, A94XD61
+Price: €650,000
+Metadata: 4 Bed1 Bath101 m²Semi-D
+Details: Details not available.
+------------------------------
+Address: 108 Foxrock Avenue, Foxrock, Foxrock, Dublin 18, D18T9H3
+Price: €995,000
+Metadata: 4 Bed5 BathDetached
+Details: Details not available.
+------------------------------
+Address: 35 Pembroke Gardens, Ballsbridge, Dublin 4, D04W2Y7
+Price: €895,000
+Metadata: 2 Bed2 Bath98 m²Terrace
+Details: Details not available.
+------------------------------
+Address: 3A Highfield, Templerainey, Arklow, Co. Wicklow, Y14EA09
+Price: €675,000
+Metadata: 4 Bed3 Bath217 m²Detached
+Details: Details not available.
+------------------------------
