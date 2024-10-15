@@ -1,5 +1,5 @@
-import urllib.request
 from bs4 import BeautifulSoup
+import urllib.request
 
 def scrape_property_details(link):
     """Fetches and parses the property details from a given link."""
@@ -10,14 +10,14 @@ def scrape_property_details(link):
 
         soup = BeautifulSoup(content, 'html.parser')
 
-        
-        description = soup.find('div', class_='description-class')  
-        features = soup.find('div', class_='features-class')  
+        # Extracting the description using data-testid attribute
+        description_div = soup.find('div', {'data-testid': 'description'})
+        description = description_div.get_text(strip=True) if description_div else 'Description not available.'
 
-        if description and features:
-            return f'Description: {description.get_text(strip=True)}\nFeatures: {features.get_text(strip=True)}'
-        else:
-            return 'Details not available.'
+        features_div = soup.find('div', class_='sc-9eebe19d-4 bdZnCt')
+        features = features_div.get_text(strip=True) if features_div else 'Features not available.'
+
+        return f'Description: {description}\nFeatures: {features}'
 
     except Exception as e:
         print(f'Error fetching property details from {link}: {e}')
