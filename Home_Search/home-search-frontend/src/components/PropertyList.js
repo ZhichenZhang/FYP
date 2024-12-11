@@ -1,103 +1,80 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import SearchBar from './SearchBar';
+import PropertyCard from './PropertyCard';
 import './PropertyList.css';
 
 function PropertyList() {
   const [properties, setProperties] = useState([]);
-  const [filteredProperties, setFilteredProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(12); // Limit of 12 properties per page
+  const limit = 12;
 
   useEffect(() => {
     const fetchProperties = async () => {
       setLoading(true);
       try {
         const response = await axios.get('http://127.0.0.1:5000/api/properties', {
-          params: {
-            page,
-            limit,
-          },
+          params: { page, limit, searchTerm },
         });
-        const propertiesData = response.data.properties || [];
-        const totalProperties = response.data.total || 0;
-
-        setProperties(propertiesData);
-        setFilteredProperties(propertiesData);
-        setTotalPages(Math.ceil(totalProperties / limit));
-      } catch (error) {
-        setError(error);
+        setProperties(response.data.properties || []);
+        setTotalPages(Math.ceil(response.data.total / limit));
+      } catch (err) {
+        setError('Error fetching properties. Please try again.');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProperties();
-  }, [page, limit]);
+  }, [page, searchTerm]);
 
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredProperties(properties);
-    } else {
-      const filtered = properties.filter((property) =>
-        property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        property.property_type.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredProperties(filtered);
-    }
-  }, [searchTerm, properties]);
-
-  const handleNextPage = () => {
-    if (page < totalPages) {
-      setPage(page + 1);
-    }
+  const toggleFavorite = (id) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(id)
+        ? prevFavorites.filter((favId) => favId !== id)
+        : [...prevFavorites, id]
+    );
   };
-
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
-  if (loading) {
-    return <div className="loading">Loading properties...</div>;
-  }
-
-  if (error) {
-    return <div className="error">Error loading properties: {error.message}</div>;
-  }
 
   return (
     <div className="property-list">
       <h1 className="title">Find Your Dream Home</h1>
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <div className="property-grid">
-        {filteredProperties.length > 0 ? (
-          filteredProperties.map((property, index) => (
-            <div key={index} className="property-card">
-              <h2 className="property-title">{property.address}</h2>
-              <p>Price: {property.price}</p>
-              <p>Bedrooms: {property.bedrooms}</p>
-              <p>Bathrooms: {property.bathrooms}</p>
-              <p>Area: {property.area}</p>
-              <p>Property Type: {property.property_type}</p>
-              <a href={property.link} target="_blank" rel="noopener noreferrer" className="view-property-link">
-                View Property
-              </a>
-            </div>
-          ))
-        ) : (
-          <div className="no-properties">No properties found.</div>
-        )}
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-bar"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search properties..."
+        />
       </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <div className="property-grid">
+          {properties.map((property) => (
+            <PropertyCard
+              key={property.id}
+              property={property}
+              isFavorite={favorites.includes(property.id)}
+              onFavoriteToggle={() => toggleFavorite(property.id)}
+            />
+          ))}
+        </div>
+      )}
       <div className="pagination">
-        <button onClick={handlePreviousPage} disabled={page === 1} className="pagination-button">
+        <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
           Previous
         </button>
-        <span className="page-info"> Page {page} of {totalPages} </span>
-        <button onClick={handleNextPage} disabled={page >= totalPages} className="pagination-button">
+        <span>
+          Page {page} of {totalPages}
+        </span>
+        <button onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page >= totalPages}>
           Next
         </button>
       </div>

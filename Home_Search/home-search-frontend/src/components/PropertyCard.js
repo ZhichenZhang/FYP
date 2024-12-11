@@ -1,6 +1,7 @@
 import React from 'react';
+import './PropertyCard.css';
 
-const PropertyCard = ({ property }) => {
+const PropertyCard = ({ property, isFavorite, onFavoriteToggle }) => {
   return (
     <div className="property-card">
       <h2>{property.address}</h2>
@@ -9,7 +10,15 @@ const PropertyCard = ({ property }) => {
       <p><strong>Bathrooms:</strong> {property.bathrooms}</p>
       <p><strong>Area:</strong> {property.area}</p>
       <p><strong>Type:</strong> {property.property_type}</p>
-      <a href={property.link} target="_blank" rel="noopener noreferrer">View Property</a>
+      <a href={property.link} target="_blank" rel="noopener noreferrer" className="view-property-link">
+        View Property
+      </a>
+      <button
+        className={`favorite-button ${isFavorite ? 'active' : ''}`}
+        onClick={onFavoriteToggle}
+      >
+        {isFavorite ? '❤️' : '♡'}
+      </button>
     </div>
   );
 };
