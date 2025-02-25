@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PropertyCard from './PropertyCard';
+import Pagination from './Pagination';
 import './PropertyList.css';
 
-function PropertyList() {
-  const [properties, setProperties] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+function PropertyList({ favorites, onFavoriteToggle }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [properties, setProperties] = useState([]);
   const limit = 12;
 
   useEffect(() => {
@@ -20,7 +20,11 @@ function PropertyList() {
         const response = await axios.get('http://127.0.0.1:5000/api/properties', {
           params: { page, limit, searchTerm },
         });
-        setProperties(response.data.properties || []);
+        const propertiesWithIds = (response.data.properties || []).map(property => ({
+          ...property,
+          id: property.id || property._id || property.address.replace(/\s+/g, '-').toLowerCase()
+        }));
+        setProperties(propertiesWithIds);
         setTotalPages(Math.ceil(response.data.total / limit));
       } catch (err) {
         setError('Error fetching properties. Please try again.');
@@ -31,12 +35,10 @@ function PropertyList() {
     fetchProperties();
   }, [page, searchTerm]);
 
-  const toggleFavorite = (id) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(id)
-        ? prevFavorites.filter((favId) => favId !== id)
-        : [...prevFavorites, id]
-    );
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -52,32 +54,31 @@ function PropertyList() {
         />
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <div className="flex justify-center items-center min-h-[200px]">
+          <p>Loading...</p>
+        </div>
       ) : error ? (
-        <p>{error}</p>
+        <div className="flex justify-center items-center min-h-[200px]">
+          <p className="text-red-500">{error}</p>
+        </div>
       ) : (
         <div className="property-grid">
           {properties.map((property) => (
             <PropertyCard
               key={property.id}
               property={property}
-              isFavorite={favorites.includes(property.id)}
-              onFavoriteToggle={() => toggleFavorite(property.id)}
+              isFavorite={favorites.has(property.id)}
+              onFavoriteToggle={() => onFavoriteToggle(property.id)}
             />
           ))}
         </div>
       )}
-      <div className="pagination">
-        <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
-          Previous
-        </button>
-        <span>
-          Page {page} of {totalPages}
-        </span>
-        <button onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page >= totalPages}>
-          Next
-        </button>
-      </div>
+      
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
