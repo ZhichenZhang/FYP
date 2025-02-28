@@ -1,63 +1,46 @@
 import axios from 'axios';
 
-// DeepSeek API service
+const DEEPSEEK_API_URL = process.env.REACT_APP_DEEPSEEK_API_URL;
+const API_KEY = process.env.REACT_APP_DEEPSEEK_API_KEY;
+
 const deepseekService = {
-  apiKey: process.env.REACT_APP_DEEPSEEK_API_KEY,
-  apiEndpoint: 'https://api.deepseek.com/v1/chat/completions', // Update with actual endpoint
-  
-  // Method to generate a chat completion
-  async generateChatCompletion(messages, options = {}) {
+  async searchProperties(userMessage) {
     try {
-      const response = await axios.post(
-        this.apiEndpoint,
-        {
-          model: options.model || "deepseek-chat", // Default model
-          messages,
-          temperature: options.temperature || 0.7,
-          max_tokens: options.maxTokens || 1000,
-          top_p: options.topP || 1,
-          frequency_penalty: options.frequencyPenalty || 0,
-          presence_penalty: options.presencePenalty || 0,
+      const requestConfig = {
+        url: DEEPSEEK_API_URL,
+        method: 'post',
+        data: {
+          model: 'deepseek-chat',
+          messages: [
+            { role: 'user', content: userMessage } // Ensure messages is an array of objects
+          ],
+          temperature: 0.7,
+          max_tokens: 1000
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiKey}`
-          }
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`
         }
-      );
-      
-      return response.data;
+      };
+
+      console.log('Request Config:', requestConfig); // Debugging line
+
+      const response = await axios(requestConfig);
+      return response.data.choices[0].message.content;
     } catch (error) {
       console.error('Error calling DeepSeek API:', error);
-      throw error;
-    }
-  },
-  
-  // Method specifically for property search
-  async searchProperties(userQuery, propertyData, chatHistory = []) {
-    const messages = [
-      {
-        role: "system",
-        content: `You are a helpful property search assistant. You help users find properties based on their needs. 
-        Here's the current property database:
-        ${JSON.stringify(propertyData)}
-        
-        If the user asks about specific properties (e.g., by location, price range, number of bedrooms), 
-        find matching properties from the database. If multiple properties match, list the top 3.
-        Format your responses with the property ID, address, price, and key features.
-        If a user wants to see a specific property, respond with "SHOW_PROPERTY:[property_id]" at the end of your message.`
-      },
-      ...chatHistory,
-      { role: "user", content: userQuery }
-    ];
-    
-    try {
-      const completion = await this.generateChatCompletion(messages);
-      return completion.choices[0].message.content;
-    } catch (error) {
-      console.error('Error searching properties:', error);
-      throw error;
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+        throw new Error(`API Error: ${error.response.status} - ${error.response.data.message || 'Unauthorized'}`);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        throw new Error('No response received from the server. Please check your network connection.');
+      } else {
+        console.error('Request setup error:', error.message);
+        throw new Error('Failed to send request to DeepSeek API.');
+      }
     }
   }
 };

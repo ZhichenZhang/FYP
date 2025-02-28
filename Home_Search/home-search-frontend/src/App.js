@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import PropertyList from './components/PropertyList';
 import Favorites from './components/Favorites';
-import Profile from './components/Profile';
 import ChatBot from './components/ChatBot';
 import ChatBotToggle from './components/ChatBotToggle';
 import axios from 'axios';
@@ -12,6 +11,7 @@ function App() {
   const [favorites, setFavorites] = useState(new Set());
   const [properties, setProperties] = useState([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [filteredProperties, setFilteredProperties] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
   
   useEffect(() => {
@@ -74,6 +74,16 @@ function App() {
     }
   };
   
+  const handlePropertiesFiltered = (filteredProps) => {
+    setFilteredProperties(filteredProps);
+    // Optionally, scroll to the property list
+    document.querySelector('.property-list')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleClearFilters = () => {
+    setFilteredProperties(null);
+  };
+  
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
@@ -85,11 +95,25 @@ function App() {
         <Routes>
           <Route 
             path="/" 
-            element={<PropertyList favorites={favorites} onFavoriteToggle={handleFavoriteToggle} />} 
+            element={
+              <PropertyList 
+                favorites={favorites} 
+                onFavoriteToggle={handleFavoriteToggle} 
+                filteredProperties={filteredProperties}
+                onClearFilters={handleClearFilters}
+              />
+            } 
           />
           <Route 
             path="/properties" 
-            element={<PropertyList favorites={favorites} onFavoriteToggle={handleFavoriteToggle} />} 
+            element={
+              <PropertyList 
+                favorites={favorites} 
+                onFavoriteToggle={handleFavoriteToggle} 
+                filteredProperties={filteredProperties}
+                onClearFilters={handleClearFilters}
+              />
+            } 
           />
           <Route 
             path="/favorites" 
@@ -101,13 +125,14 @@ function App() {
               />
             } 
           />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<div>Profile Page Coming Soon</div>} />
         </Routes>
         
         {isChatOpen && (
           <ChatBot 
             properties={properties} 
             onPropertySelected={handlePropertySelected}
+            onPropertiesFiltered={handlePropertiesFiltered}
           />
         )}
         <ChatBotToggle isOpen={isChatOpen} toggleChat={toggleChat} />

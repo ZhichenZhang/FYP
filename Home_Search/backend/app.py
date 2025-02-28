@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from database_utils import get_properties_collection
+from database_utils import get_properties_collection, filter_properties
 
 app = Flask(__name__)
 CORS(app)  # Add CORS support
@@ -40,6 +40,21 @@ def get_properties():
         })
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+@app.route('/api/filterProperties', methods=['GET'])
+def filter_properties_route():
+    user_query = request.args.get('query', '')
+    if not user_query:
+        return jsonify({"error": "No query provided"}), 400
+
+    try:
+        filtered = filter_properties(user_query)
+        for prop in filtered:
+            prop.pop('_id', None)  # remove _id if you like
+        return jsonify({"properties": filtered}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
