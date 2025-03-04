@@ -4,43 +4,38 @@ const DEEPSEEK_API_URL = process.env.REACT_APP_DEEPSEEK_API_URL;
 const API_KEY = process.env.REACT_APP_DEEPSEEK_API_KEY;
 
 const deepseekService = {
-  async searchProperties(userMessage) {
+  async parsePropertyQuery(userMessage) {
     try {
-      const requestConfig = {
-        url: DEEPSEEK_API_URL,
-        method: 'post',
-        data: {
-          model: 'deepseek-chat',
-          messages: [
-            { role: 'user', content: userMessage } // Ensure messages is an array of objects
-          ],
-          temperature: 0.7,
-          max_tokens: 1000
-        },
+      const systemPrompt = `Analyze this property search query and extract parameters in JSON format:
+      {
+        "bedrooms": {"min": number, "exact": number, "max": number},
+        "price": {"min": number, "max": number},
+        "location": string,
+        "property_type": string,
+        "features": string[],
+        "intent": "rent"|"buy"|"unknown"
+      }
+      Consider synonyms, ranges, and approximate values. Convert all prices to EUR numbers.`;
+
+      const response = await axios.post(DEEPSEEK_API_URL, {
+        model: 'deepseek-chat',
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage }
+        ],
+        temperature: 0.3,
+        response_format: { type: "json_object" }
+      }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${API_KEY}`
         }
-      };
+      });
 
-      console.log('Request Config:', requestConfig); // Debugging line
-
-      const response = await axios(requestConfig);
-      return response.data.choices[0].message.content;
+      return JSON.parse(response.data.choices[0].message.content);
     } catch (error) {
-      console.error('Error calling DeepSeek API:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-        throw new Error(`API Error: ${error.response.status} - ${error.response.data.message || 'Unauthorized'}`);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-        throw new Error('No response received from the server. Please check your network connection.');
-      } else {
-        console.error('Request setup error:', error.message);
-        throw new Error('Failed to send request to DeepSeek API.');
-      }
+      console.error('DeepSeek parsing error:', error);
+      return null;
     }
   }
 };
