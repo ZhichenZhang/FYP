@@ -1,6 +1,7 @@
 import urllib.request
 from bs4 import BeautifulSoup
 import re
+import re
 
 def scrape_daft_details(link):
     """Fetches and parses the property details from a given link, returning structured data."""

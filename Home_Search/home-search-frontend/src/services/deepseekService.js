@@ -23,9 +23,9 @@ const deepseekService = {
             'Authorization': `Bearer ${this.apiKey}`
           }
         }
-      );
-      
-      return response.data;
+      });
+
+      return JSON.parse(response.data.choices[0].message.content);
     } catch (error) {
       console.error('Error calling DeepSeek API:', error);
       throw error;
