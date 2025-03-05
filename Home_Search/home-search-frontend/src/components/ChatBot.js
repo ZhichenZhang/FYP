@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import deepseekService from '../services/deepseekService';
 import './ChatBot.css';
 
-function ChatBot({ properties, onPropertySelected }) {
+function ChatBot({ 
+  properties, 
+  onPropertySelected, 
+  onFilterProperties 
+}) {
   const [messages, setMessages] = useState([
     { 
       text: "Hi there! I'm your property assistant. How can I help you find your dream home today?", 
@@ -15,73 +19,41 @@ function ChatBot({ properties, onPropertySelected }) {
   
   // Scroll to bottom of chat when messages update
   useEffect(() => {
-    scrollToBottom();
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
-  
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  
-  // Format properties data for the AI context
-  const formatPropertiesForContext = () => {
-    return properties.slice(0, 20).map(p => ({
-      id: p.id,
-      address: p.address,
-      price: p.price,
-      bedrooms: p.bedrooms,
-      bathrooms: p.bathrooms,
-      area: p.area,
-      property_type: p.property_type
-    }));
-  };
   
   const handleSendMessage = async () => {
     if (!input.trim()) return;
     
-    // Add user message to chat
+    // 1. Add user's message to the conversation
     const userMessage = { text: input, sender: 'user' };
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+
     setIsLoading(true);
-    
+    setInput('');
+
     try {
-      const propertyContext = formatPropertiesForContext();
-      
-      // Format chat history for the DeepSeek API
-      const chatHistory = messages.map(msg => ({
-        role: msg.sender === 'bot' ? 'assistant' : 'user',
-        content: msg.text
-      }));
-      
-      // Use the DeepSeek service to get a response
-      const botReply = await deepseekService.searchProperties(
-        input,
-        propertyContext,
-        chatHistory
-      );
-      
-      // Check if we need to show a specific property
-      const showPropertyMatch = botReply.match(/SHOW_PROPERTY:([a-zA-Z0-9-_]+)/);
-      if (showPropertyMatch) {
-        const propertyId = showPropertyMatch[1];
-        const cleanedReply = botReply.replace(/SHOW_PROPERTY:[a-zA-Z0-9-_]+/, '');
-        
-        // Trigger property selection in parent component
-        const foundProperty = properties.find(p => p.id === propertyId);
-        if (foundProperty && onPropertySelected) {
-          onPropertySelected(foundProperty);
-        }
-        
-        setMessages(prev => [...prev, { text: cleanedReply, sender: 'bot' }]);
-      } else {
-        setMessages(prev => [...prev, { text: botReply, sender: 'bot' }]);
-      }
+      // 2. Ask the LLM to parse the user’s input into a short search term.
+      const refinedQuery = await deepseekService.parseUserQuery(input);
+
+      // 3. Filter the page using that refined query (this triggers a request in PropertyList)
+      onFilterProperties(refinedQuery);
+
+
+      const refineMessage = {
+        text: `Sure! Let me filter properties using: "${refinedQuery}".`,
+        sender: 'bot'
+      };
+      setMessages(prev => [...prev, refineMessage]);
+
     } catch (error) {
-      console.error('Error getting DeepSeek API response:', error);
+      console.error('Error parsing user query:', error);
       setMessages(prev => [
         ...prev, 
         { 
-          text: "Sorry, I encountered an error while processing your request. Please try again.", 
+          text: "Sorry, there was an error processing your request. Please try again.", 
           sender: 'bot' 
         }
       ]);

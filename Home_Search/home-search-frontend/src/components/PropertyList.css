@@ -23,8 +23,8 @@
 .property-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  column-gap: 30px; /* Horizontal gap between columns */
-  row-gap: 90px; /* Increased vertical gap between rows */
+  column-gap: 30px; /* horizontal gap */
+  row-gap: 90px;    /* vertical gap */
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
@@ -60,4 +60,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.clear-button {
+  background-color: #ccc;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 10px;
+}
+
+.clear-button:hover {
+  background-color: #aaa;
 }

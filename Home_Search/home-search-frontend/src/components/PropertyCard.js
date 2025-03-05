@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, ExternalLink, Home, Ruler, Calendar } from 'lucide-react';
+import { Map, ExternalLink, Home, Calendar } from 'lucide-react';
 import './PropertyCard.css';
 
 function PropertyCard({ property, isFavorite, onFavoriteToggle }) {
@@ -11,24 +11,19 @@ function PropertyCard({ property, isFavorite, onFavoriteToggle }) {
     onFavoriteToggle();
   };
 
-  // Calculate time on market (for demo purposes)
-  const getTimeOnMarket = () => {
-    const dates = ['2 weeks', '1 month', '3 days', '5 weeks'];
-    return dates[Math.floor(Math.random() * dates.length)];
-  };
+  const timeOnMarket = property.date_entered || 'N/A';
+  const berRating = property.ber_rating || 'N/A';
 
-  // Assign a BER rating (for demo purposes)
-  const getBERRating = () => {
-    const ratings = ['A2', 'B1', 'B2', 'C1', 'C2'];
-    return ratings[Math.floor(Math.random() * ratings.length)];
-  };
+  // Parse numeric price & area if needed
+  const numericPrice = parseInt((property.price || '').replace(/[^\d]/g, ''), 10) || 0;
+  const numericArea = parseInt((property.area || '').replace(/[^\d]/g, ''), 10) || 0;
 
   return (
     <div id={`property-${property.id}`} className="property-card">
       <button
-        className={`favorite-button ${isFavorite ? "active" : ""}`}
+        className={`favorite-button ${isFavorite ? 'active' : ''}`}
         onClick={handleFavoriteClick}
-        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         type="button"
       >
         <svg
@@ -36,12 +31,17 @@ function PropertyCard({ property, isFavorite, onFavoriteToggle }) {
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          fill={isFavorite ? "#000" : "none"}
-          stroke={isFavorite ? "none" : "currentColor"}
+          fill={isFavorite ? '#000' : 'none'}
+          stroke={isFavorite ? 'none' : 'currentColor'}
           strokeWidth="2"
           aria-hidden="true"
         >
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5
+                   2.09C13.09 3.81 14.76 3 16.5 3c3.08 0
+                   5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55
+                   11.54L12 21.35z"
+          />
         </svg>
       </button>
       
@@ -51,12 +51,10 @@ function PropertyCard({ property, isFavorite, onFavoriteToggle }) {
           {property.property_type}
         </div>
         <div className="property-meta">
-          <span className="ber-rating">
-            BER: {getBERRating()}
-          </span>
+          <span className="ber-rating">{berRating}</span>
           <span>
             <Calendar size={14} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-            {getTimeOnMarket()} on market
+            {timeOnMarket} on market
           </span>
         </div>
       </div>
@@ -64,7 +62,8 @@ function PropertyCard({ property, isFavorite, onFavoriteToggle }) {
       <h2 className="property-title">{property.address}</h2>
       
       <div className="property-details">
-        <p className="property-price">{property.price?.toLocaleString()}</p>
+        {}
+        <p className="property-price">{property.price || 'N/A'}</p>
 
         <div className="property-specs-grid">
           <div className="property-spec">
@@ -82,24 +81,29 @@ function PropertyCard({ property, isFavorite, onFavoriteToggle }) {
           <div className="property-spec">
             <span className="spec-label">Price per m²</span>
             <span className="spec-value">
-              €{Math.round(property.price / parseInt(property.area)).toLocaleString()}
+              {numericPrice && numericArea
+                ? `€${Math.round(numericPrice / numericArea).toLocaleString()}`
+                : 'N/A'
+              }
             </span>
           </div>
         </div>
         
         <div className="property-links">
-          <a 
-            href={property.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="property-link"
-          >
-            <ExternalLink size={16} />
-            View on Daft.ie
-          </a>
+          {property.link && (
+            <a
+              href={property.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="property-link"
+            >
+              <ExternalLink size={16} />
+              View on Daft.ie
+            </a>
+          )}
           
           {property.map_link && (
-            <a 
+            <a
               href={property.map_link}
               target="_blank"
               rel="noopener noreferrer"

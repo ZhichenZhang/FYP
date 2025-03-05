@@ -1,4 +1,6 @@
 import React from 'react';
+import './ChatBotToggle.css';
+
 
 function ChatBotToggle({ isOpen, toggleChat }) {
   return (
