@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import PropertyList from './components/PropertyList';
 import Favorites from './components/Favorites';
+import Profile from './components/Profile';
 import ChatBot from './components/ChatBot';
 import ChatBotToggle from './components/ChatBotToggle';
 import Footer from './components/Footer';       // <--- NEW: Footer
@@ -19,7 +20,6 @@ function App() {
   const [favorites, setFavorites] = useState(new Set());
   const [properties, setProperties] = useState([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [filteredProperties, setFilteredProperties] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
   
   // Holds the chatbot-generated filter (e.g., "house under 300k"), 

@@ -74,7 +74,6 @@ function PropertyList({
     <div className="property-list">
       <h1 className="title">Find Your Dream Home</h1>
       
-      
       <div className="search-container">
         <input
           type="text"

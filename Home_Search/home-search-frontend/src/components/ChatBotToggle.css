@@ -1,29 +1,37 @@
+/* ChatBotToggle.css */
+
+/* Ensures the toggle is fixed in the bottom-right corner */
 .chatbot-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    
-    width: 50px;
-    height: 50px;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  
-    z-index: 9999;
-  }
-  
-  .chatbot-toggle:hover {
-    background-color: #0056b3;
-  }
-  
-  .chatbot-toggle.open {
-    background-color: #e74c3c;
-  }
-  
-  
+  /* Styling for the button */
+  width: 50px;
+  height: 50px;
+  background-color: #007bff; /* Adjust color as you like */
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* Add a drop shadow so it stands out */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  /* Highest z-index so it's on top of other elements */
+  z-index: 9999;
+}
+
+/* Optional hover effect */
+.chatbot-toggle:hover {
+  background-color: #0056b3;
+}
+
+/* If you want the close icon to look different when the chatbot is open:
+   You can apply a different background color or icon style. */
+.chatbot-toggle.open {
+  background-color: #e74c3c;
+}
+
