@@ -29,16 +29,31 @@ function ChatBot({
     setInput('');
 
     try {
-      // Example: ask DeepSeek to parse the user’s text
+      // Example: ask DeepSeek to parse the user's text
       const refinedQuery = await deepseekService.parseUserQuery(input);
+  
+      // Check if there are multiple locations in the query
+      const locationMatches = refinedQuery.match(/\b(carlow|cavan|clare|cork|donegal|dublin|galway|kerry|kildare|kilkenny|laois|leitrim|limerick|longford|louth|mayo|meath|monaghan|offaly|roscommon|sligo|tipperary|waterford|westmeath|wexford|wicklow|antrim|armagh|down|fermanagh|londonderry|tyrone)\b/gi);
 
+      const uniqueLocations = locationMatches ? [...new Set(locationMatches.map(loc => loc.toLowerCase()))] : [];
+      
+      let responseMessage;
+      if (uniqueLocations.length > 1) {
+        // Multiple locations detected
+        const locationList = uniqueLocations.join(' and ');
+        responseMessage = `I'll look for properties in ${locationList} with: "${refinedQuery}"`;
+      } else {
+        // Single or no location
+        responseMessage = `Sure! Let me filter properties using: "${refinedQuery}"`;
+      }
+  
       // Show user what we got from the LLM
-      const botMsg = { text: `Sure! Let me filter properties using: "${refinedQuery}"`, sender: 'bot' };
+      const botMsg = { text: responseMessage, sender: 'bot' };
       setMessages(prev => [...prev, botMsg]);
-
+  
       // Trigger the site filter
       onFilterProperties(refinedQuery);
-
+  
     } catch (error) {
       console.error('ChatBot error:', error);
       const errMsg = { text: "Sorry, there was an error processing your request.", sender: 'bot' };

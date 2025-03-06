@@ -90,7 +90,7 @@ def filter_properties(query):
                 if "under" in query.lower() or "less than" in query.lower() or "below" in query.lower():
                     should_include = doc_price <= price
                 else:
-                    # Default: look for properties around this price (±10%)
+                    #look for properties around this price (±10%)
                     should_include = (doc_price >= price * 0.9) and (doc_price <= price * 1.1)
         
         # Bedroom filtering

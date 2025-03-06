@@ -38,9 +38,13 @@ const deepseekService = {
         content: `
 You're a property search assistant. 
 User: ${userText}
-Return a concise query capturing the property search, 
-like "house under 300k 3 bed". 
-No extra text, just the refined query.
+
+Return a concise query capturing the property search. Follow these guidelines:
+1. For multiple locations, separate them with commas (e.g., "dublin, galway")
+2. Include both cities and regions mentioned
+3. Format should be like "house under 300k 3 bed dublin, athlone"
+4. If a location is mentioned in relation to another (e.g., "near", "close to"), include both
+5. No extra text, just the refined query.
         `
       }
     ];

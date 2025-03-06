@@ -19,7 +19,7 @@ def parse_search_query(search_term):
     # Normalize text
     search_term = search_term.lower().strip()
 
-    # We'll split on some words like 'and', 'with', commas, etc.
+    # split on some words like 'and', 'with', commas, etc.
     segments = re.split(r'\band\b|\bwith\b|,', search_term)
     # e.g. "house with garden under 400k dublin" -> ["house ", " garden under 400k dublin"]
 
@@ -45,11 +45,13 @@ def parse_search_query(search_term):
     # Property type synonyms
     # If user says "house", we also match "detached", "semi-detached", "terraced".
     property_types = {
-        "house": ["house", "detached", "semi-detached", "terraced", "townhouse"],
+        "house": ["house", "detached", "semi-detached", "terraced", "townhouse","bungalow"],
         "apartment": ["apartment", "flat"],
         "detached": ["detached"],
+        "terraced": ["terraced","end of terraced"],
         "semi-detached": ["semi-detached"],
         "townhouse": ["townhouse"],
+        "bungalow": ["bungalow"]
     }
 
     # Common features we might see
@@ -58,11 +60,16 @@ def parse_search_query(search_term):
     # Locations to match in address or county
     # Extend this list if needed
     locations = [
-        "dublin", "cork", "galway", "sligo",
-        "kildare", "donegal", "mayo", "limerick",
-        "waterford", "meath", "wicklow", "kilkenny"
+        "Carlow", "Cavan", "Clare", "Cork", "Donegal", "Dublin", "Galway", "Kerry",
+    "Kildare", "Kilkenny", "Laois", "Leitrim", "Limerick", "Longford", "Louth",
+    "Mayo", "Meath", "Monaghan", "Offaly", "Roscommon", "Sligo", "Tipperary",
+    "Waterford", "Westmeath", "Wexford", "Wicklow",
+    "Antrim", "Armagh", "Down", "Fermanagh", "Londonderry", "Tyrone"
     ]
 
+    # Track detected locations to build OR clauses
+    detected_locations = []
+    
     def add_condition(cond):
         """Helper to append a sub-condition into the $and list."""
         if cond is not None and cond not in query["$and"]:
@@ -72,6 +79,7 @@ def parse_search_query(search_term):
     for seg in segments:
         seg = seg.strip()
         matched_segment = False
+        segment_locations = []
 
         # 1) Price Patterns
         for pattern in price_patterns:
@@ -144,13 +152,11 @@ def parse_search_query(search_term):
         for loc in locations:
             if loc in seg:
                 matched_segment = True
-                add_condition({
-                    "$or": [
-                        {"address": {"$regex": loc, "$options": "i"}},
-                        {"county":  {"$regex": loc, "$options": "i"}}
-                    ]
-                })
-                # We don't "break" here if you want to allow multiple locations in one segment
+                segment_locations.append(loc)
+        
+        # Add all locations from this segment as an OR condition
+        if segment_locations:
+            detected_locations.extend(segment_locations)
 
         # 6) If none of the above matched, do a fallback text match
         #    This ensures the user typed something that we still catch in address, description, etc.
@@ -163,6 +169,24 @@ def parse_search_query(search_term):
                     {"property_type":{"$regex": seg, "$options": "i"}}
                 ]
             })
+
+    # Handle multiple locations as an OR query
+    if detected_locations:
+        location_conditions = []
+        for loc in detected_locations:
+            location_conditions.append({
+                "$or": [
+                    {"address": {"$regex": loc, "$options": "i"}},
+                    {"county": {"$regex": loc, "$options": "i"}},
+                    {"description": {"$regex": loc, "$options": "i"}}  # Also check description for location mentions
+                ]
+            })
+        
+        # If multiple locations, use $or across all of them
+        if len(location_conditions) > 1:
+            add_condition({"$or": location_conditions})
+        else:
+            add_condition(location_conditions[0])
 
     # If $and is empty (meaning user gave us nothing?), fallback again
     if len(query["$and"]) == 0:
