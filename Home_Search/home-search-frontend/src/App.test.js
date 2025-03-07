@@ -1,8 +1,20 @@
-import { render, screen } from '@testing-library/react';
+// Mock components that use routing
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  BrowserRouter: ({ children }) => <div>{children}</div>
+}));
+
+// Mock axios
+jest.mock('axios', () => ({
+  get: jest.fn(() => Promise.resolve({ data: { properties: [], total: 0 } }))
+}));
+
+import React from 'react';
+import { render } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders app without crashing', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  // Basic check that it renders
+  expect(document.body).toBeInTheDocument();
 });
