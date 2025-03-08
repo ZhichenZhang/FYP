@@ -3,3 +3,8 @@ flask-cors
 pymongo
 dnspython
 python-dotenv
+beautifulsoup4
+pytest
+pytest-cov
+pytest-mock
+mongomock
