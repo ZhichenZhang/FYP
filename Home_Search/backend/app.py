@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database_utils import get_properties_collection
 import re
+import time
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests (so React can call Flask)
@@ -207,11 +208,11 @@ def parse_search_query(search_term):
 def get_properties():
     try:
         # Retrieve pagination and searchTerm from query params
-        limit = int(request.args.get('limit', 20))  # default 20
-        page = int(request.args.get('page', 1))     # default page 1
+        limit = int(request.args.get('limit', 20)) 
+        page = int(request.args.get('page', 1))     
         search_term = request.args.get('searchTerm', '').strip()
 
-        collection = get_properties_collection("daft")  # or your actual collection name
+        collection = get_properties_collection("daft")
 
         # Calculate skip for pagination
         skip = (page - 1) * limit
@@ -222,6 +223,9 @@ def get_properties():
         else:
             query = {}
 
+        # Timing the database query
+        start_time = time.time()
+
         # Query the database
         total_properties = collection.count_documents(query)
         properties = list(
@@ -231,10 +235,15 @@ def get_properties():
             .limit(limit)
         )
 
+         # TIMING END: Calculate query time
+        query_time_ms = (time.time() - start_time) * 1000  # Convert to milliseconds
+        print(f"Database Query Time: {query_time_ms:.2f}ms for query: {query}")
+
+
         return jsonify({
             "properties": properties,
             "total": total_properties,
-            "queryUsed": query  # helpful for debugging
+            "queryUsed": query  
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
