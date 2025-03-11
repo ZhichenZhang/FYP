@@ -1,5 +1,3 @@
-# app.py
-
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database_utils import get_properties_collection
@@ -20,10 +18,46 @@ def parse_search_query(search_term):
     # Normalize text
     search_term = search_term.lower().strip()
 
+    # Extract all locations from the search term first - expanded list with more towns
+    locations = [
+        # Counties
+        "carlow", "cavan", "clare", "cork", "donegal", "dublin", "galway", "kerry",
+        "kildare", "kilkenny", "laois", "leitrim", "limerick", "longford", "louth",
+        "mayo", "meath", "monaghan", "offaly", "roscommon", "sligo", "tipperary",
+        "waterford", "westmeath", "wexford", "wicklow", "antrim", "armagh", "down", 
+        "fermanagh", "londonderry", "tyrone",
+        # Major towns and cities
+        "athlone", "mullingar", "tullamore", "portlaoise", "naas", "navan", "drogheda", "dundalk",
+        "swords", "bray", "greystones", "arklow", "gorey", "enniscorthy", "wexford", "kilkenny",
+        "carlow", "athy", "newbridge", "kildare", "maynooth", "celbridge", "leixlip", "lucan",
+        "clondalkin", "tallaght", "dun laoghaire", "balbriggan", "skerries", "malahide", "howth",
+        "sutton", "raheny", "clontarf", "killester", "fairview", "drumcondra", "phibsborough",
+        "cabra", "blanchardstown", "castleknock", "chapelizod", "palmerstown", "ballyfermot",
+        "inchicore", "kilmainham", "dolphins barn", "crumlin", "walkinstown", "terenure",
+        "rathfarnham", "churchtown", "dundrum", "ballinteer", "sandyford", "stepaside",
+        "leopardstown", "foxrock", "cabinteely", "killiney", "dalkey", "sandycove", "glasthule",
+        "monkstown", "blackrock", "booterstown", "ballsbridge", "donnybrook", "ranelagh",
+        "rathmines", "harold's cross", "rathgar", "milltown", "clonskeagh", "goatstown",
+        "stillorgan", "kilmacud", "mount merrion", "deansgrange", "dun laoghaire", "glasnevin",
+        "santry", "beaumont", "artane", "killester", "coolock", "darndale", "donaghmede",
+        "kilbarrack", "raheny", "clontarf", "east wall", "north wall", "kilshane", "mulhuddart"
+    ]
+    
+    # Find all locations mentioned in the search term
+    detected_locations = []
+    for loc in locations:
+        if re.search(r'\b' + loc + r'\b', search_term, re.IGNORECASE):
+            detected_locations.append(loc)
+    
+    # Create a modified search term with locations removed
+    # This prevents locations from being processed in the normal segment loop
+    modified_search_term = search_term
+    for loc in detected_locations:
+        modified_search_term = re.sub(r'\b' + loc + r'\b', '', modified_search_term, flags=re.IGNORECASE)
+    
     # split on some words like 'and', 'with', commas, etc.
-    segments = re.split(r'\band\b|\bwith\b|,', search_term)
-    # e.g. "house with garden under 400k dublin" -> ["house ", " garden under 400k dublin"]
-
+    segments = re.split(r'\band\b|\bwith\b|,', modified_search_term)
+    
     # Start with an $and query container
     query = {"$and": []}
 
@@ -57,30 +91,19 @@ def parse_search_query(search_term):
 
     # Common features we might see
     feature_keywords = ['garden', 'parking', 'balcony', 'view', 'garage', 'pool']
-
-    # Locations to match in address or county
-    # Extend this list if needed
-    locations = [
-        "Carlow", "Cavan", "Clare", "Cork", "Donegal", "Dublin", "Galway", "Kerry",
-    "Kildare", "Kilkenny", "Laois", "Leitrim", "Limerick", "Longford", "Louth",
-    "Mayo", "Meath", "Monaghan", "Offaly", "Roscommon", "Sligo", "Tipperary",
-    "Waterford", "Westmeath", "Wexford", "Wicklow",
-    "Antrim", "Armagh", "Down", "Fermanagh", "Londonderry", "Tyrone"
-    ]
-
-    # Track detected locations to build OR clauses
-    detected_locations = []
     
     def add_condition(cond):
         """Helper to append a sub-condition into the $and list."""
         if cond is not None and cond not in query["$and"]:
             query["$and"].append(cond)
 
-    # Go through each segment
+    # Process non-location segments
     for seg in segments:
         seg = seg.strip()
+        if not seg:  # Skip empty segments
+            continue
+            
         matched_segment = False
-        segment_locations = []
 
         # 1) Price Patterns
         for pattern in price_patterns:
@@ -149,17 +172,7 @@ def parse_search_query(search_term):
                     ]
                 })
 
-        # 5) Location matching (search in address or county)
-        for loc in locations:
-            if loc in seg:
-                matched_segment = True
-                segment_locations.append(loc)
-        
-        # Add all locations from this segment as an OR condition
-        if segment_locations:
-            detected_locations.extend(segment_locations)
-
-        # 6) If none of the above matched, do a fallback text match
+        # 5) If none of the above matched, do a fallback text match
         #    This ensures the user typed something that we still catch in address, description, etc.
         if not matched_segment and seg:
             add_condition({
@@ -171,7 +184,7 @@ def parse_search_query(search_term):
                 ]
             })
 
-    # Handle multiple locations as an OR query
+    # Handle locations as a separate OR condition
     if detected_locations:
         location_conditions = []
         for loc in detected_locations:
@@ -179,15 +192,13 @@ def parse_search_query(search_term):
                 "$or": [
                     {"address": {"$regex": loc, "$options": "i"}},
                     {"county": {"$regex": loc, "$options": "i"}},
-                    {"description": {"$regex": loc, "$options": "i"}}  # Also check description for location mentions
+                    {"description": {"$regex": "\\bin " + loc + "\\b", "$options": "i"}}
                 ]
             })
         
-        # If multiple locations, use $or across all of them
-        if len(location_conditions) > 1:
+        # Add a combined location OR condition
+        if location_conditions:
             add_condition({"$or": location_conditions})
-        else:
-            add_condition(location_conditions[0])
 
     # If $and is empty (meaning user gave us nothing?), fallback again
     if len(query["$and"]) == 0:
@@ -201,8 +212,8 @@ def parse_search_query(search_term):
             ]
         }
 
+    print(f"Generated query for '{search_term}': {query}")
     return query
-
 
 @app.route('/api/properties', methods=['GET'])
 def get_properties():
