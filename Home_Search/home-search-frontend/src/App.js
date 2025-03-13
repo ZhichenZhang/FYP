@@ -8,10 +8,10 @@ import Favorites from './components/Favorites';
 import Profile from './components/Profile';
 import ChatBot from './components/ChatBot';
 import ChatBotToggle from './components/ChatBotToggle';
-import Footer from './components/Footer';       // <--- NEW: Footer
-import BackToTop from './components/BackToTop'; // <--- NEW: Back-to-top button
+import Footer from './components/Footer';      
+import BackToTop from './components/BackToTop'; 
 import axios from 'axios';
-import './index.css'; // If you have a global stylesheet with fonts, etc.
+import './index.css'; 
 
 function App() {
   // ─────────────────────────────────────────────────────────────────────────────
@@ -85,7 +85,6 @@ function App() {
 
   const handlePropertySelected = (property) => {
     setSelectedProperty(property);
-    // Optionally scroll into view + highlight
     const element = document.getElementById(`property-${property.id}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });

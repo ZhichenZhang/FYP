@@ -38,8 +38,6 @@ venv\Scripts\activate
 # On macOS/Linux
 source venv/bin/activate
 
-# Install dependencies
-pip install -r requirements.txt
 ```
 
 ### Frontend Setup
@@ -48,6 +46,9 @@ cd home-search-frontend
 
 # Install dependencies
 npm install
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
 ## 3. Running the Application

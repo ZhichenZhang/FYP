@@ -6,6 +6,7 @@
     "axios": "^1.7.7",
     "lucide-react": "^0.469.0",
     "openai": "^4.86.1",
+    "pytest": "^1.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
@@ -48,12 +49,12 @@
     "identity-obj-proxy": "^3.0.0"
   },
   "jest": {
-  "transformIgnorePatterns": [
-    "node_modules/(?!(axios)/)"
-  ],
-  "moduleNameMapper": {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
-    "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/src/__mocks__/fileMock.js"
+    "transformIgnorePatterns": [
+      "node_modules/(?!(axios)/)"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+      "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/src/__mocks__/fileMock.js"
+    }
   }
-}
 }

@@ -1,4 +1,3 @@
-// src/services/__tests__/deepseekService.test.js
 import axios from 'axios';
 import deepseekService from '../../services/deepseekService';
 
@@ -39,7 +38,7 @@ describe('deepseekService', () => {
           model: "deepseek-chat",
           messages,
           temperature: 0.7,
-          max_tokens: 200,
+          max_tokens: 400,
         },
         {
           headers: {
