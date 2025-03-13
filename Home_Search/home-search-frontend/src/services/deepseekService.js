@@ -12,8 +12,8 @@ const deepseekService = {
         {
           model: "deepseek-chat",
           messages,
-          temperature: 0.5,
-          max_tokens: 200,
+          temperature: 0.8,
+          max_tokens: 400,
           ...options,
         },
         {
@@ -36,16 +36,41 @@ const deepseekService = {
       {
         role: "system",
         content: `
-You're a property search assistant. 
-User: ${userText}
-Return a concise query capturing the property search, 
-like "house under 300k 3 bed". 
-No extra text, just the refined query.
+You're a property search assistant that corrects spelling mistakes and returns clean search queries.
+
+User query: "${userText}"
+
+First, identify and correct any spelling mistakes in the user's query.
+Common corrections include:
+- "hose", "house" → "house"
+- "dablin", "doblin", "doeblin" → "dublin"
+- "geaden", "gardn" → "garden"
+- "apartmnt" → "apartment"
+
+If the query doesn't seem related to property search or contains complete gibberish, respond with exactly "INVALID_QUERY".
+
+If you detect a misspelling, respond with EXACTLY this format:
+"The user's query "${userText}" appears to be a misspelling of "[correction]." Refined query: [search terms]"
+
+Otherwise, just return the cleaned search terms directly.
+
+Remember:
+1. For multiple locations, separate them with commas (e.g., "dublin, galway")
+2. Include ONLY what the user explicitly mentioned
+3. DO NOT add price ranges, bedroom counts, or other details unless explicitly mentioned by the user
+4. Keep the search terms concise and clean
         `
       }
     ];
     const completion = await this.generateChatCompletion(messages);
-    return completion.choices[0].message.content.trim();
+    const response = completion.choices[0].message.content.trim();
+    
+    // Add explicit check for INVALID_QUERY
+    if (response === "INVALID_QUERY") {
+      throw new Error("Invalid property query");
+    }
+    
+    return response;
   }
 };
 

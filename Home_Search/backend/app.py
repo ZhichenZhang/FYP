@@ -1,9 +1,8 @@
-# app.py
-
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from database_utils import get_properties_collection
 import re
+import time
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests (so React can call Flask)
@@ -19,10 +18,46 @@ def parse_search_query(search_term):
     # Normalize text
     search_term = search_term.lower().strip()
 
-    # We'll split on some words like 'and', 'with', commas, etc.
-    segments = re.split(r'\band\b|\bwith\b|,', search_term)
-    # e.g. "house with garden under 400k dublin" -> ["house ", " garden under 400k dublin"]
-
+    # Extract all locations from the search term first - expanded list with more towns
+    locations = [
+        # Counties
+        "carlow", "cavan", "clare", "cork", "donegal", "dublin", "galway", "kerry",
+        "kildare", "kilkenny", "laois", "leitrim", "limerick", "longford", "louth",
+        "mayo", "meath", "monaghan", "offaly", "roscommon", "sligo", "tipperary",
+        "waterford", "westmeath", "wexford", "wicklow", "antrim", "armagh", "down", 
+        "fermanagh", "londonderry", "tyrone",
+        # Major towns and cities
+        "athlone", "mullingar", "tullamore", "portlaoise", "naas", "navan", "drogheda", "dundalk",
+        "swords", "bray", "greystones", "arklow", "gorey", "enniscorthy", "wexford", "kilkenny",
+        "carlow", "athy", "newbridge", "kildare", "maynooth", "celbridge", "leixlip", "lucan",
+        "clondalkin", "tallaght", "dun laoghaire", "balbriggan", "skerries", "malahide", "howth",
+        "sutton", "raheny", "clontarf", "killester", "fairview", "drumcondra", "phibsborough",
+        "cabra", "blanchardstown", "castleknock", "chapelizod", "palmerstown", "ballyfermot",
+        "inchicore", "kilmainham", "dolphins barn", "crumlin", "walkinstown", "terenure",
+        "rathfarnham", "churchtown", "dundrum", "ballinteer", "sandyford", "stepaside",
+        "leopardstown", "foxrock", "cabinteely", "killiney", "dalkey", "sandycove", "glasthule",
+        "monkstown", "blackrock", "booterstown", "ballsbridge", "donnybrook", "ranelagh",
+        "rathmines", "harold's cross", "rathgar", "milltown", "clonskeagh", "goatstown",
+        "stillorgan", "kilmacud", "mount merrion", "deansgrange", "dun laoghaire", "glasnevin",
+        "santry", "beaumont", "artane", "killester", "coolock", "darndale", "donaghmede",
+        "kilbarrack", "raheny", "clontarf", "east wall", "north wall", "kilshane", "mulhuddart"
+    ]
+    
+    # Find all locations mentioned in the search term
+    detected_locations = []
+    for loc in locations:
+        if re.search(r'\b' + loc + r'\b', search_term, re.IGNORECASE):
+            detected_locations.append(loc)
+    
+    # Create a modified search term with locations removed
+    # This prevents locations from being processed in the normal segment loop
+    modified_search_term = search_term
+    for loc in detected_locations:
+        modified_search_term = re.sub(r'\b' + loc + r'\b', '', modified_search_term, flags=re.IGNORECASE)
+    
+    # split on some words like 'and', 'with', commas, etc.
+    segments = re.split(r'\band\b|\bwith\b|,', modified_search_term)
+    
     # Start with an $and query container
     query = {"$and": []}
 
@@ -45,32 +80,29 @@ def parse_search_query(search_term):
     # Property type synonyms
     # If user says "house", we also match "detached", "semi-detached", "terraced".
     property_types = {
-        "house": ["house", "detached", "semi-detached", "terraced", "townhouse"],
+        "house": ["house", "detached", "semi-detached", "terraced", "townhouse","bungalow"],
         "apartment": ["apartment", "flat"],
         "detached": ["detached"],
+        "terraced": ["terraced","end of terraced"],
         "semi-detached": ["semi-detached"],
         "townhouse": ["townhouse"],
+        "bungalow": ["bungalow"]
     }
 
     # Common features we might see
     feature_keywords = ['garden', 'parking', 'balcony', 'view', 'garage', 'pool']
-
-    # Locations to match in address or county
-    # Extend this list if needed
-    locations = [
-        "dublin", "cork", "galway", "sligo",
-        "kildare", "donegal", "mayo", "limerick",
-        "waterford", "meath", "wicklow", "kilkenny"
-    ]
-
+    
     def add_condition(cond):
         """Helper to append a sub-condition into the $and list."""
         if cond is not None and cond not in query["$and"]:
             query["$and"].append(cond)
 
-    # Go through each segment
+    # Process non-location segments
     for seg in segments:
         seg = seg.strip()
+        if not seg:  # Skip empty segments
+            continue
+            
         matched_segment = False
 
         # 1) Price Patterns
@@ -140,19 +172,7 @@ def parse_search_query(search_term):
                     ]
                 })
 
-        # 5) Location matching (search in address or county)
-        for loc in locations:
-            if loc in seg:
-                matched_segment = True
-                add_condition({
-                    "$or": [
-                        {"address": {"$regex": loc, "$options": "i"}},
-                        {"county":  {"$regex": loc, "$options": "i"}}
-                    ]
-                })
-                # We don't "break" here if you want to allow multiple locations in one segment
-
-        # 6) If none of the above matched, do a fallback text match
+        # 5) If none of the above matched, do a fallback text match
         #    This ensures the user typed something that we still catch in address, description, etc.
         if not matched_segment and seg:
             add_condition({
@@ -163,6 +183,22 @@ def parse_search_query(search_term):
                     {"property_type":{"$regex": seg, "$options": "i"}}
                 ]
             })
+
+    # Handle locations as a separate OR condition
+    if detected_locations:
+        location_conditions = []
+        for loc in detected_locations:
+            location_conditions.append({
+                "$or": [
+                    {"address": {"$regex": loc, "$options": "i"}},
+                    {"county": {"$regex": loc, "$options": "i"}},
+                    {"description": {"$regex": "\\bin " + loc + "\\b", "$options": "i"}}
+                ]
+            })
+        
+        # Add a combined location OR condition
+        if location_conditions:
+            add_condition({"$or": location_conditions})
 
     # If $and is empty (meaning user gave us nothing?), fallback again
     if len(query["$and"]) == 0:
@@ -176,18 +212,18 @@ def parse_search_query(search_term):
             ]
         }
 
+    print(f"Generated query for '{search_term}': {query}")
     return query
-
 
 @app.route('/api/properties', methods=['GET'])
 def get_properties():
     try:
         # Retrieve pagination and searchTerm from query params
-        limit = int(request.args.get('limit', 20))  # default 20
-        page = int(request.args.get('page', 1))     # default page 1
+        limit = int(request.args.get('limit', 20)) 
+        page = int(request.args.get('page', 1))     
         search_term = request.args.get('searchTerm', '').strip()
 
-        collection = get_properties_collection("daft")  # or your actual collection name
+        collection = get_properties_collection("daft")
 
         # Calculate skip for pagination
         skip = (page - 1) * limit
@@ -198,6 +234,9 @@ def get_properties():
         else:
             query = {}
 
+        # Timing the database query
+        start_time = time.time()
+
         # Query the database
         total_properties = collection.count_documents(query)
         properties = list(
@@ -207,10 +246,15 @@ def get_properties():
             .limit(limit)
         )
 
+         # TIMING END: Calculate query time
+        query_time_ms = (time.time() - start_time) * 1000  # Convert to milliseconds
+        print(f"Database Query Time: {query_time_ms:.2f}ms for query: {query}")
+
+
         return jsonify({
             "properties": properties,
             "total": total_properties,
-            "queryUsed": query  # helpful for debugging
+            "queryUsed": query  
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

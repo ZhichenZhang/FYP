@@ -1,0 +1,23 @@
+{
+    "properties": [
+      {
+        "id": "123",
+        "address": "123 Test Street, Dublin",
+        "price": "€350,000",
+        "bedrooms": "3 Bed",
+        "bathrooms": "2 Bath",
+        "property_type": "House",
+        "area": "110 m²"
+      },
+      {
+        "id": "456",
+        "address": "456 Sample Road, Cork",
+        "price": "€275,000",
+        "bedrooms": "2 Bed",
+        "bathrooms": "1 Bath",
+        "property_type": "Apartment",
+        "area": "80 m²"
+      }
+    ],
+    "total": 2
+  }

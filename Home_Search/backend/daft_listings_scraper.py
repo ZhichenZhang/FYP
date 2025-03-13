@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from daft_property_details_scraper import scrape_daft_details
 from database_utils import get_properties_collection
 import time
-import re  # <-- you'll need re for stripping out digits
+import re 
 
 properties_collection = get_properties_collection('daft')
 
@@ -23,7 +23,7 @@ def scrape_daft_listings(base_url, max_page_index=12740):
             content = resp.read()
             soup = BeautifulSoup(content, 'html.parser')
 
-            # Adjust this selector if Daft changes their classes again
+            # Adjust this selector if Daft changes their classes
             properties = soup.find_all('a', class_='sc-b457dee4-17 kUElAW')
 
             if not properties:

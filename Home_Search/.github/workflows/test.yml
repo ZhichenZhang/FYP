@@ -1,0 +1,87 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  frontend-tests:
+    name: Frontend Unit Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: home-search-frontend/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd home-search-frontend
+          npm ci
+      
+      - name: Run Jest tests
+        run: |
+          cd home-search-frontend
+          npm test -- --watchAll=false
+      
+      - name: Generate coverage report
+        run: |
+          cd home-search-frontend
+          npm run test:coverage
+      
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-coverage
+          path: home-search-frontend/coverage
+  
+  backend-tests:
+    name: Backend Unit Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-mock mongomock
+      
+      - name: Run pytest tests
+        run: |
+          cd backend
+          python -m pytest --cov=. --cov-report=xml
+        env:
+          MONGO_DB_USERNAME: test
+          MONGO_DB_PASSWORD: test
+          MONGO_DB_CLUSTER_URL: localhost:27017
+          MONGO_DB_NAME: test_db
+      
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-coverage
+          path: backend/coverage.xml
