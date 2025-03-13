@@ -19,6 +19,11 @@ This document outlines the testing strategy for the Home Search application, cov
 
 ## Backend Testing
 
+```bash
+# depending on python version you may need to use python3 instead of python
+python --version
+```
+
 ### Unit and Integration Tests
 - Framework: pytest
 - Location: `backend/tests/*.py`
