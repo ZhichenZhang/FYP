@@ -1,6 +1,7 @@
 import urllib.request
 from bs4 import BeautifulSoup
 import re
+import re
 
 def scrape_daft_details(link):
     """Fetches and parses the property details from a given link, returning structured data."""
@@ -9,9 +10,7 @@ def scrape_daft_details(link):
             link,
             headers={
                 'User-Agent': (
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                    'AppleWebKit/537.36 (KHTML, like Gecko) '
-                    'Chrome/107.0.0.0 Safari/537.36'
+                    "Brave/1.49.120"
                 )
             }
         )
@@ -82,7 +81,6 @@ def scrape_daft_details(link):
         # ---------------------------------------------------------------------
         # 7.Extract BER rating
         # ---------------------------------------------------------------------
-        # Potentially found under data-testid="ber"
         ber_rating = 'BER not available.'
         ber_div = soup.find('div', {'data-testid': 'ber'})
         if ber_div:
@@ -125,7 +123,6 @@ def scrape_daft_details(link):
             'features': features_list,
             'map_link': map_link,
             'link': link,
-            # New fields
             'ber_rating': ber_rating,
             'date_entered': date_entered
         }

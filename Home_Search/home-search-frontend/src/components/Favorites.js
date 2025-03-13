@@ -1,6 +1,6 @@
 import React from 'react';
 import PropertyCard from './PropertyCard';
-import './PropertyList.css';  // Reuse the same styling
+import './PropertyList.css'; 
 
 function Favorites({ properties, favorites, onFavoriteToggle }) {
   const favoriteProperties = properties.filter(property => favorites.has(property.id));

@@ -1,42 +1,51 @@
+// deepseekService.js
 import axios from 'axios';
 
-const DEEPSEEK_API_URL = process.env.REACT_APP_DEEPSEEK_API_URL;
-const API_KEY = process.env.REACT_APP_DEEPSEEK_API_KEY;
-
 const deepseekService = {
-  async parsePropertyQuery(userMessage) {
+  apiKey: process.env.REACT_APP_DEEPSEEK_API_KEY,
+  apiEndpoint: 'https://api.deepseek.com/v1/chat/completions',
+
+  async generateChatCompletion(messages, options = {}) {
     try {
-      const systemPrompt = `Analyze this property search query and extract parameters in JSON format:
-      {
-        "bedrooms": {"min": number, "exact": number, "max": number},
-        "price": {"min": number, "max": number},
-        "location": string,
-        "property_type": string,
-        "features": string[],
-        "intent": "rent"|"buy"|"unknown"
-      }
-      Consider synonyms, ranges, and approximate values. Convert all prices to EUR numbers.`;
-
-      const response = await axios.post(DEEPSEEK_API_URL, {
-        model: 'deepseek-chat',
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage }
-        ],
-        temperature: 0.3,
-        response_format: { type: "json_object" }
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`
+      const response = await axios.post(
+        this.apiEndpoint,
+        {
+          model: "deepseek-chat",
+          messages,
+          temperature: 0.5,
+          max_tokens: 200,
+          ...options,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.apiKey}`
+          }
         }
-      });
-
-      return JSON.parse(response.data.choices[0].message.content);
+      );
+      return response.data;
     } catch (error) {
-      console.error('DeepSeek parsing error:', error);
-      return null;
+      console.error('DeepSeek API error:', error);
+      throw error;
     }
+  },
+
+  // A parseUserQuery that returns a short, refined string
+  async parseUserQuery(userText) {
+    const messages = [
+      {
+        role: "system",
+        content: `
+You're a property search assistant. 
+User: ${userText}
+Return a concise query capturing the property search, 
+like "house under 300k 3 bed". 
+No extra text, just the refined query.
+        `
+      }
+    ];
+    const completion = await this.generateChatCompletion(messages);
+    return completion.choices[0].message.content.trim();
   }
 };
 

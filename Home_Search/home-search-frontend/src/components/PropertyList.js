@@ -4,92 +4,70 @@ import PropertyCard from './PropertyCard';
 import Pagination from './Pagination';
 import './PropertyList.css';
 
-function PropertyList({ favorites, onFavoriteToggle, filteredProperties, onClearFilters }) {
+function PropertyList({ 
+  favorites, 
+  onFavoriteToggle, 
+  chatbotFilter = null  // Receives filter text from the chatbot
+}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [properties, setProperties] = useState([]);
-  const [displayedProperties, setDisplayedProperties] = useState([]);
+  
+  // How many items to fetch per page
   const limit = 12;
 
+  // Whenever chatbotFilter changes, set that as our active search term
   useEffect(() => {
-    // Only fetch properties if we don't have filtered properties from chatbot
-    if (filteredProperties === null) {
-      fetchProperties();
-    } else {
-      // Use the filtered properties instead
-      const propertiesWithIds = (filteredProperties || []).map(property => ({
-        ...property,
-        id: property.id || property._id || property.address.replace(/\s+/g, '-').toLowerCase()
-      }));
-      
-      setProperties(propertiesWithIds);
-      setTotalPages(Math.ceil(propertiesWithIds.length / limit));
-      
-      // Reset to first page when filters change
-      if (page !== 1) {
-        setPage(1);
-      } else {
-        // If already on page 1, update displayed properties
-        updateDisplayedProperties(propertiesWithIds, 1);
+    if (chatbotFilter) {
+      setSearchTerm(chatbotFilter);
+      setPage(1);
+    }
+  }, [chatbotFilter]);
+
+  // Fetch properties from the backend whenever page or searchTerm changes
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/api/properties', {
+          params: { page, limit, searchTerm },
+        });
+        const propertiesWithIds = (response.data.properties || []).map(property => ({
+          ...property,
+          id: property.id 
+            || property._id 
+            || property.address.replace(/\s+/g, '-').toLowerCase()
+        }));
+        setProperties(propertiesWithIds);
+        setTotalPages(Math.ceil(response.data.total / limit));
+      } catch (err) {
+        setError('Error fetching properties. Please try again.');
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [filteredProperties]);
+    };
+    fetchProperties();
+  }, [page, searchTerm]);
 
-  // Handle pagination for both normal and filtered properties
-  useEffect(() => {
-    if (filteredProperties !== null) {
-      // For filtered properties
-      updateDisplayedProperties(properties, page);
-    } else {
-      // For regular API fetch
-      fetchProperties();
-    }
-  }, [page]);
-
-  const updateDisplayedProperties = (allProperties, currentPage) => {
-    const startIndex = (currentPage - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedProperties = allProperties.slice(startIndex, endIndex);
-    setDisplayedProperties(paginatedProperties);
-  };
-
-  const fetchProperties = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get('http://127.0.0.1:5000/api/properties', {
-        params: { page, limit, searchTerm },
-      });
-      const propertiesWithIds = (response.data.properties || []).map(property => ({
-        ...property,
-        id: property.id || property._id || property.address.replace(/\s+/g, '-').toLowerCase()
-      }));
-      setProperties([]);  // Clear previous properties
-      setDisplayedProperties(propertiesWithIds);
-      setTotalPages(Math.ceil(response.data.total / limit));
-    } catch (err) {
-      setError('Error fetching properties. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Pagination
   const handlePageChange = (newPage) => {
     setPage(newPage);
-    // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // User typing in the search bar
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    // Reset to first page when search changes
     setPage(1);
-    // Clear any filtered properties since we're doing a manual search
-    if (onClearFilters && filteredProperties !== null) {
-      onClearFilters();
-    }
+  };
+
+  // Clear the filter (resets searchTerm -> fetches all results again)
+  const handleClearFilter = () => {
+    setSearchTerm('');
+    setPage(1);
   };
 
   return (
@@ -104,18 +82,17 @@ function PropertyList({ favorites, onFavoriteToggle, filteredProperties, onClear
           onChange={handleSearchChange}
           placeholder="Search properties..."
         />
-        
-        {/* Show filter indicator and clear button if filters are applied */}
-        {filteredProperties !== null && (
-          <div className="filter-indicator">
-            <span>Showing {filteredProperties.length} filtered properties</span>
-            <button onClick={onClearFilters} className="clear-filter-button">
-              Clear Filters
-            </button>
-          </div>
+
+        {searchTerm && (
+          <button 
+            className="clear-button" 
+            onClick={handleClearFilter}
+          >
+            Clear
+          </button>
         )}
       </div>
-      
+
       {loading ? (
         <div className="flex justify-center items-center min-h-[200px]">
           <p>Loading...</p>
@@ -125,35 +102,30 @@ function PropertyList({ favorites, onFavoriteToggle, filteredProperties, onClear
           <p className="text-red-500">{error}</p>
         </div>
       ) : (
-        <div className="property-grid">
-          {filteredProperties !== null 
-            ? displayedProperties.map((property) => (
+        <>
+          {properties.length === 0 ? (
+            <div className="flex justify-center items-center min-h-[200px]">
+              <p>No properties found matching your search.</p>
+            </div>
+          ) : (
+            <div className="property-grid">
+              {properties.map((property) => (
                 <PropertyCard
                   key={property.id}
                   property={property}
                   isFavorite={favorites.has(property.id)}
                   onFavoriteToggle={() => onFavoriteToggle(property.id)}
                 />
-              ))
-            : displayedProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  isFavorite={favorites.has(property.id)}
-                  onFavoriteToggle={() => onFavoriteToggle(property.id)}
-                />
-              ))
-          }
-        </div>
-      )}
-      
-      {/* Show pagination for both regular and filtered properties */}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+              ))}
+            </div>
+          )}
+          
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
     </div>
   );
