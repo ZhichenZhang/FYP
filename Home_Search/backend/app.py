@@ -3,6 +3,7 @@ from flask_cors import CORS
 from database_utils import get_properties_collection
 import re
 import time
+import os
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests (so React can call Flask)
@@ -261,4 +262,5 @@ def get_properties():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)

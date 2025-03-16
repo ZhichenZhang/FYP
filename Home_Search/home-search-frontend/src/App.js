@@ -1,5 +1,3 @@
-// App.js
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
@@ -12,6 +10,13 @@ import Footer from './components/Footer';
 import BackToTop from './components/BackToTop'; 
 import axios from 'axios';
 import './index.css'; 
+
+
+const isDevelopment = process.env.NODE_ENV === 'development';
+const API_BASE_URL = isDevelopment 
+  ? 'http://127.0.0.1:5000'
+  : 'https://backend-withered-field-7034.fly.dev';
+
 
 function App() {
   // ─────────────────────────────────────────────────────────────────────────────
@@ -33,7 +38,7 @@ function App() {
     // Fetch a larger set of properties so the chatbot has more data
     const fetchAllProperties = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/api/properties', {
+        const response = await axios.get(`${API_BASE_URL}/api/properties`, {
           params: { limit: 100 }
         });
         const propertiesWithIds = (response.data.properties || []).map(property => ({

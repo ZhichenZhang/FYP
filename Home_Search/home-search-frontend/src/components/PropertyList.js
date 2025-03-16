@@ -16,6 +16,12 @@ function PropertyList({
   const [totalPages, setTotalPages] = useState(1);
   const [properties, setProperties] = useState([]);
   
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const API_BASE_URL = isDevelopment 
+  ? 'http://127.0.0.1:5000'
+  : 'https://backend-withered-field-7034.fly.dev';
+
+
   // How many items to fetch per page
   const limit = 12;
 
@@ -32,7 +38,7 @@ function PropertyList({
     const fetchProperties = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://127.0.0.1:5000/api/properties', {
+        const response = await axios.get(`${API_BASE_URL}/api/properties`, {
           params: { page, limit, searchTerm },
         });
         const propertiesWithIds = (response.data.properties || []).map(property => ({

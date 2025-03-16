@@ -1,6 +1,12 @@
 // deepseekService.js
 import axios from 'axios';
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+const API_BASE_URL = isDevelopment 
+  ? 'http://127.0.0.1:5000'
+  : 'https://backend-withered-field-7034.fly.dev';
+
+
 const deepseekService = {
   apiKey: process.env.REACT_APP_DEEPSEEK_API_KEY,
   apiEndpoint: 'https://api.deepseek.com/v1/chat/completions',
