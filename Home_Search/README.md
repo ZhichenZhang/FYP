@@ -180,4 +180,3 @@ If the AI assistant isn't responding:
 1. Verify your DeepSeek API key is correctly set in both .env files
 2. Check the browser console for API errors
 3. Make sure you have sufficient API quota remaining
-```
