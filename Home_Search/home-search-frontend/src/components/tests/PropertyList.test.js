@@ -59,7 +59,7 @@ describe('PropertyList Component', () => {
     
     // Check API was called with correct params
     expect(axios.get).toHaveBeenCalledWith(
-      'http://127.0.0.1:5000/api/properties',
+      'http://127.0.0.1:8080/api/properties',
       { params: { page: 1, limit: 12, searchTerm: '' } }
     );
   });
@@ -95,7 +95,7 @@ describe('PropertyList Component', () => {
     // Verify API call
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith(
-        'http://127.0.0.1:5000/api/properties',
+        'http://127.0.0.1:8080/api/properties',
         { params: { page: 1, limit: 12, searchTerm: 'dublin' } }
       );
     });

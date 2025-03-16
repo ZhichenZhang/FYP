@@ -14,7 +14,7 @@ import './index.css';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const API_BASE_URL = isDevelopment 
-  ? 'http://127.0.0.1:5000'
+  ? 'http://127.0.0.1:8080'
   : 'https://backend-home-search.fly.dev';
 
 function App() {

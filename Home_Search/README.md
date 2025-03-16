@@ -103,7 +103,7 @@ cd backend
 # Activate virtual environment if not already active
 python app.py
 ```
-The backend server will start at http://127.0.0.1:5000
+The backend server will start at http://127.0.0.1:8080
 
 #### Start the Frontend
 ```bash

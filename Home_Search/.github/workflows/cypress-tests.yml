@@ -70,7 +70,7 @@ jobs:
         with:
           working-directory: home-search-frontend
           start: npm start
-          wait-on: 'http://localhost:3000, http://127.0.0.1:5000/api/properties'
+          wait-on: 'http://localhost:3000, http://127.0.0.1:8080/api/properties'
           wait-on-timeout: 120
       
       # Upload screenshots and videos
