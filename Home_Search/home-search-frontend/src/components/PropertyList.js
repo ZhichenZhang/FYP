@@ -19,8 +19,7 @@ function PropertyList({
   const isDevelopment = process.env.NODE_ENV === 'development';
   const API_BASE_URL = isDevelopment 
   ? 'http://127.0.0.1:5000'
-  : 'https://backend-withered-field-7034.fly.dev';
-
+  : 'https://backend-home-search.fly.dev';
 
   // How many items to fetch per page
   const limit = 12;
